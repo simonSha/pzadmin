@@ -159,14 +159,15 @@ const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("submit!", isHaveNum.value);
       if (isHaveNum.value) {
-        login(loginForm).then((res) => {
-          console.log(res);
-          let data = res.data;
+        login(loginForm).then(({ data }) => {
+          console.log(data);
           if (data.code === 10000) {
-            localStorage.getItem("pz_token", data.token);
-            localStorage.getItem("userInfo", data.userInfo);
+            localStorage.setItem("pz_token", data.data.token);
+            localStorage.setItem(
+              "userInfo",
+              JSON.stringify(data.data.userInfo)
+            );
             router.push("/");
           }
         });

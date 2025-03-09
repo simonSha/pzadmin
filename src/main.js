@@ -5,6 +5,16 @@ import router from "./router/index";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import store from "./store";
 
+router.beforeEach((to, from) => {
+  const token = localStorage.getItem("pz_token");
+
+  if (!token && to.path !== "/login") {
+    return "/login";
+  } else if (token && to.path == "/login") {
+    return "/dashboard";
+  }
+});
+
 const app = createApp(App);
 app.use(router);
 app.use(store);

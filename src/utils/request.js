@@ -9,6 +9,11 @@ const http = axios.create({
 // 添加请求拦截器
 http.interceptors.request.use(
   function (config) {
+    const whiteUrl = ["/ligin"];
+    const token = localStorage.getItem("pz_token");
+    if (token && !whiteUrl.includes(config.url)) {
+      config.headers["X-token"] = token;
+    }
     // 在发送请求之前做些什么
     return config;
   },
