@@ -69,10 +69,12 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-import { getCode, login, authentication } from "../../api";
+import { ref, reactive, computed, toRaw } from "vue";
+import { getCode, login, authentication, menuPermissions } from "../../api";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
+const store = useStore();
 const imgUrl = new URL("../../../public/login-header.png", import.meta.url)
   .href;
 const router = useRouter();
@@ -82,6 +84,10 @@ const loginForm = reactive({
   userName: "",
   passWord: "",
   validCode: "",
+});
+
+const routerList = computed(() => {
+  return store.state.menu.routerList;
 });
 
 // 账号校验规则
@@ -169,6 +175,14 @@ const submitForm = async (formEl) => {
               JSON.stringify(data.data.userInfo)
             );
             router.push("/");
+            menuPermissions().then(({ data }) => {
+              store.commit("dynamicMenu", data.data);
+              // console.log("routerList", routerList.value);
+              toRaw(routerList.value).forEach((e) => {
+                console.log(e);
+                router.addRoute("main", e);
+              });
+            });
           }
         });
       } else {

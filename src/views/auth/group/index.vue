@@ -1,7 +1,13 @@
 <template>
   <div class="group-box">
+    <panel-head :route="route"></panel-head>
     <div>
-      <el-button @click="open(null)" type="primary" size="small" icon="Plus"
+      <el-button
+        style="margin: 10px 0"
+        @click="open(null)"
+        type="primary"
+        size="small"
+        icon="Plus"
         >新增
       </el-button>
       <el-table :data="tableData.list" border style="width: 100%">
@@ -21,6 +27,7 @@
           :background="false"
           layout="total, prev, pager, next"
           :total="tableData.total"
+          :default-page-size="paginationData.pageSize"
           @current-change="handleCurrentChange"
         />
       </div>
@@ -69,7 +76,9 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { userGetMenu, userSetmenu, menuList } from "../../../api";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const isGroupDialogVisible = ref(false);
 const permissionData = ref([]);
 const paginationData = reactive({
@@ -124,7 +133,9 @@ const open = (rowData = {}) => {
   isGroupDialogVisible.value = true;
   if (rowData) {
     Object.assign(formInfo, { id: rowData.id, name: rowData.name });
-    treeRef.value.setCheckedKeys(rowData.permission);
+    if (treeRef.value) {
+      treeRef.value.setCheckedKeys(rowData.permission);
+    }
   }
 };
 
@@ -143,11 +154,20 @@ const confirm = async (formEl) => {
       formInfo.permissions = permissions;
       userSetmenu(formInfo).then(({ data }) => {
         console.log(data);
+        if (data.code === 10000) {
+          beforeClose();
+          getListData();
+        }
       });
     } else {
       console.log("error submit!", fields);
     }
   });
+};
+const handleCurrentChange = (page) => {
+  paginationData.pageNum = page;
+  console.log(page);
+  getListData();
 };
 </script>
 

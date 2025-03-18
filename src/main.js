@@ -5,6 +5,14 @@ import router from "./router/index";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import store from "./store";
 
+const localState = localStorage.getItem("pz_v3pz");
+if (localState) {
+  store.commit("dynamicMenu", JSON.parse(localState).menu.routerList);
+  store.state.menu.routerList.forEach((item) => {
+    router.addRoute("main", item);
+  });
+}
+
 router.beforeEach((to, from) => {
   const token = localStorage.getItem("pz_token");
 

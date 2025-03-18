@@ -25,7 +25,8 @@ const handleOpen = () => {};
 const handleClose = () => {};
 
 const router = useRouter();
-const menuData = reactive(router.options.routes[0].children);
+// const menuData = reactive(router.options.routes[0].children);
+const menuData = computed(() => store.state.menu.routerList);
 
 const store = useStore();
 

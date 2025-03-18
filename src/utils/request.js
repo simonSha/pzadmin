@@ -1,5 +1,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const http = axios.create({
   baseURL: "https:/v3pz.itndedu.com/v3pz",
@@ -30,6 +32,11 @@ http.interceptors.response.use(
     // 对响应数据做点什么
     if (response.data.code === -1) {
       ElMessage.warning(response.data.message);
+    } else if (response.data == -2) {
+      localStorage.removeItem("pz_token");
+      localStorage.removeItem("userInfo");
+      router.push("/login");
+      return Promise.reject("token过期");
     }
     return response;
   },

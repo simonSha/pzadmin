@@ -28,7 +28,7 @@
       </el-tabs>
     </div>
     <div class="heaeder-right">
-      <el-dropdown>
+      <el-dropdown @command="handleClick">
         <div class="el-dropdown-link flex-box">
           <el-avatar
             src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
@@ -37,7 +37,7 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>退出</el-dropdown-item>
+            <el-dropdown-item command="exit">退出</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -74,6 +74,14 @@ const tabRemove = (path) => {
     router.push({ path: value[0].path });
   } else if (index === value.length) {
     router.push({ path: value[value.length - 1].path });
+  }
+};
+
+const handleClick = (info) => {
+  if (info === "exit") {
+    localStorage.removeItem("pz_token");
+    localStorage.removeItem("userInfo");
+    router.push("/login");
   }
 };
 </script>

@@ -1,7 +1,11 @@
-const state = {
-  isCollapse: false,
-  selectMenu: [],
-};
+const localState = localStorage.getItem("pz_v3pz");
+const state = localState
+  ? JSON.parse(localState).menu
+  : {
+      isCollapse: false,
+      selectMenu: [],
+      routerList: [],
+    };
 
 const mutations = {
   isCollapseChange(state) {
@@ -14,10 +18,24 @@ const mutations = {
   },
   editMenu(state, path) {
     const index = state.selectMenu.findIndex((v) => v.path === path);
-    console.log(path, index);
     if (index !== -1) {
       state.selectMenu.splice(index, 1);
     }
+  },
+  dynamicMenu(state, data) {
+    const modules = import.meta.glob("../views/**/**/*.vue");
+    function routerSet(router) {
+      router.forEach((route) => {
+        if (!route.children) {
+          const url = `../views${route.meta.path}/index.vue`;
+          route.component = modules[url];
+        } else {
+          routerSet(route.children);
+        }
+      });
+    }
+    routerSet(data);
+    state.routerList = data;
   },
 };
 
